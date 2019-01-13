@@ -1,5 +1,8 @@
 import json
 
+class JSONDecodeError(Exception):
+	pass
+
 #{'key': {'key2': {'key3': 'value'}}}
 def add(key, value, file, key2=-1, key3=-1):
     try:
@@ -17,7 +20,7 @@ def add(key, value, file, key2=-1, key3=-1):
             new_val = {key:value}
             data = {**data, **new_val}
     except(json.decoder.JSONDecodeError):
-        data = {}
+        raise JSONDecodeError
     except(KeyError):
         if not key2 == -1:
             if not key3 == -1:
@@ -30,7 +33,10 @@ def add(key, value, file, key2=-1, key3=-1):
             new_val = {key:value}
         data = {**data, **new_val}
     finally:
-        __dump(data, file)
+        try:
+            __dump(data, file)
+        except(UnboundLocalError):
+            pass
 
 #{'key': {'key2': {'key3': 'value'}}}
 def append(key, value, file, key2=-1):
@@ -53,11 +59,15 @@ def append(key, value, file, key2=-1):
             list = [value]
         data = {key:list}
     finally:
-        __dump(data, file)
+        try:
+            __dump(data, file)
+        except(UnboundLocalError):
+            pass
 
 #{'key': {'key2': {'key3': 'value'}}}
 def edit(key, value, file, key2=-1, key3=-1):
     data = load(file)
+    
     if not key2 == -1:
         if not key3 == -1:
             data[key][key2][key3] = value
@@ -70,6 +80,7 @@ def edit(key, value, file, key2=-1, key3=-1):
 #{'key': {'key2': {'key3': 'value'}}}
 def remove(key, file, key2=-1, key3=-1):
     data = load(file)
+
     if not key2 == -1:
         if not key3 == -1:
             del data[key][key2][key3]
@@ -84,7 +95,7 @@ def load(file):
         return(json.load(f))
 
 def create(file):
-    with open(file, "w+") as f:
+    with open(file, "w+"):
         __dump({}, file)
 
 def format(file):
