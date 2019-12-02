@@ -98,9 +98,6 @@ def create(file):
     with open(file, "w+"):
         __dump({}, file)
 
-def format(file):
-    __dump({}, file)
-
 def __dump(data, file):
     with open(file, "w") as f:
         json.dump(data, f, indent=4)
