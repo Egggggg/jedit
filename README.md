@@ -1,2 +1,2 @@
 # jedit
-wow a thing to edit json files easier
+A Python module to ease manipulation of JSON files.
